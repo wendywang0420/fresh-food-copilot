@@ -1,0 +1,17 @@
+[Unit]
+Description=Fresh Food Copilot
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/fresh-food-copilot
+EnvironmentFile=/opt/fresh-food-copilot/.env.production
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm run start -- --hostname 0.0.0.0 --port 3000
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
