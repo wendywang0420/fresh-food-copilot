@@ -13,6 +13,7 @@
   "compatibility_date": "2024-12-30",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "vars": {
+    "DEMO_GENERATION_MODEL": "gpt-4o-mini",
     "ENABLE_TURNSTILE": "false",
     "NEXT_PUBLIC_ENABLE_TURNSTILE": "false",
     "ENABLE_RESEARCH_MODE": "true",
