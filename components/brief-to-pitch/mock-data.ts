@@ -1,4 +1,5 @@
 import type { BriefToPitchOutput } from "./types";
+import type { DemoLocale } from "@/lib/brief-to-pitch/copy";
 
 export const STARBUCKS_MOCK_DATA: BriefToPitchOutput = {
   brief: {
@@ -266,3 +267,268 @@ export const STARBUCKS_MOCK_DATA: BriefToPitchOutput = {
     "Close up macro shot of melted feta and sun-dried tomatoes inside a toasted artisanal focaccia bread, premium café food styling, appetizing, 8k --ar 4:3"
   ]
 };
+
+export const CN_MOCK_DATA: BriefToPitchOutput = {
+  brief: {
+    text: "一家连锁咖啡品牌计划推出下一季轻食菜单，希望新品适合年轻白领的午餐和下午茶场景。产品需要有新鲜感、轻负担、适合中央厨房生产，并且门店只具备简单加热条件。",
+    context: {
+      customerType: "连锁咖啡品牌",
+      region: "中国",
+      productCategory: "轻食 / 午餐 / 下午茶",
+      constraints: "中央厨房生产，门店仅简单加热，无复杂组装",
+      targetPriceTier: "中高端大众价位",
+      positioning: "新鲜、轻负担、白领友好",
+    },
+  },
+  operationalStrategy: {
+    selectedPlaybook: "cafe_chain",
+    keyConstraints: [
+      "门店仅可简单加热，无完整厨房能力",
+      "不适合门店二次组装",
+      "需要兼顾午餐饱腹感与轻食形象",
+      "要能自然匹配冷萃、冰茶等饮品场景",
+    ],
+    allowedFormats: [
+      "可加热三明治",
+      "预组装佛卡夏",
+      "手持型咸味烘焙",
+      "预组装扁面包口袋",
+    ],
+    riskyFormats: [
+      "已拌汁沙拉",
+      "需要现场拼装的冷食碗",
+      "多组件摆盘产品",
+      "需要完整烹饪的产品",
+    ],
+    rejectedIdeas: [
+      {
+        idea: "冷藜麦轻食碗",
+        reason: "与门店简单加热能力不匹配，也不足以支撑咖啡渠道午餐场景所需的满足感。",
+      },
+      {
+        idea: "现制卡普雷塞帕尼尼",
+        reason: "需要门店装配，且番茄出水会带来保质期和复热后的口感风险。",
+      },
+    ],
+    conceptStrategy:
+      "优先选择中央厨房可预组装、门店单步加热即可出品的手持型产品，同时保留新鲜感和轻盈感，让它既像轻食，又具备午餐级满足度。",
+  },
+  interpretation: {
+    targetAudience: "年轻白领与城市通勤人群，希望在午餐或下午茶时段获得更轻负担但不空洞的选择。",
+    emotionalKeywords: ["新鲜", "轻盈", "高级感", "高效率", "有满足感"],
+    hiddenRequirements: [
+      "产品在包装展示时要看起来干净、清爽、有食欲。",
+      "中央厨房生产后仍需保持结构稳定，适应冷藏配送与门店简单复热。",
+    ],
+    constraints: [
+      "门店不可复杂组装。",
+      "只能做单步加热或直接冷食出品。",
+      "新品需要同时适配午餐和下午茶补能场景。",
+    ],
+  },
+  marketSignals: {
+    cuisineInspiration: [
+      "地中海清爽风味",
+      "现代咖啡馆式轻午餐",
+      "亚洲白领熟悉的鸡肉与香草组合",
+    ],
+    trendSignals: [
+      "轻负担午餐正在从“低卡”转向“高质感、真满足”。",
+      "可视化包装和手持即食形态更适合咖啡零售场景。",
+    ],
+    seasonalIngredients: ["香草", "柠檬", "烤彩椒", "低水分奶酪"],
+  },
+  directions: [
+    {
+      id: "dir-cn-1",
+      name: "柠香香草鸡肉佛卡夏",
+      conceptLogic: "以结构稳定、加热后外脆内软的佛卡夏为载体，承接柠香鸡肉与咸香奶酪抹酱，兼顾新鲜感和午餐饱腹感。",
+      flavorProfile: "柠檬清香、香草气息、烘烤蒜香与轻咸奶香。",
+      textureProfile: "外层微脆、内里柔软，鸡肉嫩而不柴。",
+      factoryFeasibility: "高。鸡肉可中央厨房预制，佛卡夏载体稳定，整体现有供应链容易承接。",
+      whyItFits: "符合咖啡渠道轻午餐逻辑，适配冷饮搭配，也能在门店通过单步加热快速出品。",
+      constraintResponse: {
+        keyConstraints: ["门店简单加热", "无需门店组装", "兼顾轻负担与饱腹感"],
+        howDirectionHandlesConstraints: [
+          "产品可中央厨房完成组装，门店只需单次加热即可出品。",
+          "使用低水活度抹酱和稳定面包结构，降低冷藏阶段的吸湿风险。",
+          "鸡肉蛋白与佛卡夏体量共同支撑午餐级满足感。"
+        ],
+        unresolvedRisks: [
+          "菠菜或湿性配菜的摆放仍需验证，避免冷藏后局部回潮。"
+        ]
+      },
+      operationalFit: {
+        productionModel: "中央厨房预组装并冷藏配送到门店。",
+        storeExecution: "门店从冷藏柜取出后直接单步加热，再装入纸套出杯式交付。",
+        heatingOrHoldingMethod: "高效烤炉短时复热，不需要额外 finishing。",
+        shelfLifeStrategy: "假设 72 小时冷藏保质期，依赖低水分抹酱与湿性食材隔离布局。",
+        packagingConsiderations: "使用透气纸套与支撑性包装，降低加热后回潮并保持展示感。"
+      },
+      differentiation: {
+        whyThisIsNotGeneric: "不是泛泛的冷食轻沙拉，而是为咖啡门店单步加热出品专门设计的手持型轻午餐。",
+        customerSpecificFit: "同时满足品牌想要的新鲜感、轻负担和门店执行简单这三个核心要求。",
+        regionalOrChannelFit: "符合中国城市咖啡消费中对“轻食但别太空”的真实期待。"
+      },
+      riskRating: "Medium",
+      confidence: "High"
+    },
+    {
+      id: "dir-cn-2",
+      name: "烤彩椒鸡肉软扁面包口袋",
+      conceptLogic: "利用柔软但结构稳定的扁面包口袋包裹烤彩椒与鸡肉馅，突出轻食感，同时保持加热后食用便利。",
+      flavorProfile: "微甜烤椒、轻烟熏鸡肉、酸奶香草酱。",
+      textureProfile: "饼体柔韧、内馅湿润、局部有轻微蔬菜脆感。",
+      factoryFeasibility: "中高。馅料和面饼都适合标准化生产，但需要更细致控制馅料含水量。",
+      whyItFits: "比传统三明治更有新品感，适合年轻白领，也便于手持边走边吃。",
+      constraintResponse: {
+        keyConstraints: ["中央厨房生产", "简单加热", "年轻白领场景"],
+        howDirectionHandlesConstraints: [
+          "中央厨房可完成灌馅和封口，门店无需二次处理。",
+          "通过控制烤彩椒含水量和酱体黏度，减少复热后渗漏。",
+          "口袋型结构增强通勤和办公室场景的便利性。"
+        ],
+        unresolvedRisks: [
+          "若馅料含水偏高，面饼局部可能在货架后期变软。"
+        ]
+      },
+      operationalFit: {
+        productionModel: "标准化灌馅与封装，适合中央厨房批量生产。",
+        storeExecution: "门店仅需单步加热或在部分场景下冷食售卖。",
+        heatingOrHoldingMethod: "短时复热，避免过烤造成面饼发硬。",
+        shelfLifeStrategy: "通过控水蔬菜和稠酱体系，争取 2–3 天冷藏陈列窗口。",
+        packagingConsiderations: "口袋型包装配纸托，兼顾手持性和正面展示。"
+      },
+      differentiation: {
+        whyThisIsNotGeneric: "相较常规卷饼，它更像一款为咖啡零售货架打造的结构化新品，而不是随意拼装的 wrap。",
+        customerSpecificFit: "更适合追求新鲜感和便携感的年轻白领场景。",
+        regionalOrChannelFit: "符合中国咖啡轻食对手持、好拍、好带走的渠道偏好。"
+      },
+      riskRating: "Medium",
+      confidence: "Medium"
+    },
+    {
+      id: "dir-cn-3",
+      name: "青酱火鸡轻享卷",
+      conceptLogic: "以熟火鸡和青酱为核心，做成可冷食的轻享卷，强调下午茶补能和即拿即走。",
+      flavorProfile: "香草青酱、轻奶香、火鸡咸鲜。",
+      textureProfile: "卷饼柔软、肉感扎实、蔬菜脆爽。",
+      factoryFeasibility: "高。标准卷制结构成熟，但需要处理酱体和叶菜的水分迁移。",
+      whyItFits: "冷食即食属性适合部分门店无需加热的快取需求，也容易与冷饮捆绑销售。",
+      constraintResponse: {
+        keyConstraints: ["即拿即走", "冷藏货架", "轻负担"],
+        howDirectionHandlesConstraints: [
+          "卷饼可中央厨房直接卷制并冷藏配送。",
+          "青酱采用更厚的乳化结构，减少渗漏。",
+          "熟火鸡提供足够蛋白支撑，避免产品只剩“轻”没有满足感。"
+        ],
+        unresolvedRisks: [
+          "相较前两个方向，它对门店加热能力的利用不明显，差异化稍弱。"
+        ]
+      },
+      operationalFit: {
+        productionModel: "中央厨房冷卷成型，适合标准化切半包装。",
+        storeExecution: "可直接冷食售卖，也可视测试结果保留短时微热方案。",
+        heatingOrHoldingMethod: "以冷食为主，如需微热需谨慎验证卷饼完整性。",
+        shelfLifeStrategy: "依靠蔬菜与酱体分层、吸湿内衬等方式争取 2 天以上冷藏货架期。",
+        packagingConsiderations: "半卷纸盒包装，强调可视化与便携性。"
+      },
+      differentiation: {
+        whyThisIsNotGeneric: "不是通用健康卷，而是围绕咖啡零售的冷藏快取与饮品搭配去设计。",
+        customerSpecificFit: "适合下午茶、办公室补能和快速午餐转化。",
+        regionalOrChannelFit: "更接近中国精品咖啡与连锁咖啡的冷藏陈列消费逻辑。"
+      },
+      riskRating: "High",
+      confidence: "Medium"
+    }
+  ],
+  recipes: [
+    {
+      id: "rec-cn-1",
+      directionId: "dir-cn-1",
+      name: "柠香香草鸡肉佛卡夏",
+      description: "以预制柠香鸡肉、咸香奶酪抹酱和低含水配菜组成的佛卡夏轻午餐，适合咖啡门店单步加热后快速出品。",
+      targetOccasion: "午餐 / 下午茶补能",
+      ingredients: [
+        "迷迭香佛卡夏面包",
+        "柠香香草鸡胸肉切片",
+        "菲达酸奶抹酱",
+        "风干番茄酸豆酱",
+        "少量处理过的嫩菠菜"
+      ],
+      prepMethod: "中央厨房完成组装并冷藏配送；门店按设定程序单步加热后即可售卖。",
+      chefNotes: "抹酱体系要足够稳定，既能带来奶香层次，又不能在冷藏后明显渗水。",
+      watchouts: "叶菜和湿性配料摆放顺序必须验证，否则会影响三天货架期末段的面包结构。",
+      manufacturingNotes: {
+        makeAheadComponents: [
+          "鸡肉可采用中心厨房预制和切片。",
+          "抹酱与风干番茄酱可提前批量制备。"
+        ],
+        moistureMigrationControls: [
+          "用抹酱作为面包与湿性配料之间的脂肪屏障。",
+          "将风干番茄酱集中在中部，避免靠近切边。"
+        ],
+        textureProtection: [
+          "选用组织更紧实的佛卡夏面包体。",
+          "复热后使用透气纸套，减少蒸汽回软。"
+        ],
+        reheatingOrServingInstructions: "从冷藏状态直接复热，出炉后立即装套，建议 5 分钟内售出。",
+        estimatedShelfLifeAssumption: "在冷藏密封配送条件下，目标为 72 小时，但仍需进一步验证。"
+      },
+      validationPlan: {
+        chefValidation: [
+          "验证复热后柠檬与香草风味是否仍清晰。",
+          "确认抹酱在第 3 天仍保持稳定口感。"
+        ],
+        opsValidation: [
+          "验证门店单步加热程序是否稳定。",
+          "确认包装与出品动作不会拖慢高峰时段效率。"
+        ],
+        sensoryValidation: [
+          "对比第 1 天与第 3 天的面包和叶菜口感变化。",
+          "测试与冷萃、冰茶的搭配感受。"
+        ],
+        regulatoryOrClaimsValidation: [
+          "最终货架期表达需基于真实验证结果。",
+          "复核乳制品、麸质等过敏原标识。"
+        ]
+      },
+      constraintChecklist: [
+        {
+          name: "门店仅简单加热",
+          status: "Handled",
+          explanation: "产品为门店单步加热设计，无需额外操作。"
+        },
+        {
+          name: "无需门店组装",
+          status: "Handled",
+          explanation: "中央厨房完成全部组装。"
+        },
+        {
+          name: "轻负担但有满足感",
+          status: "Handled",
+          explanation: "鸡肉蛋白和佛卡夏体量共同支撑午餐级满足感。"
+        },
+        {
+          name: "适合冷饮搭配",
+          status: "Partially handled",
+          explanation: "风味方向明确适合冷饮，但仍建议做实际饮品搭配测试。"
+        }
+      ]
+    }
+  ],
+  pitchPackage: {
+    executiveSummary:
+      "针对连锁咖啡品牌的下一季轻食菜单，我们建议优先考虑“柠香香草鸡肉佛卡夏”。它兼顾轻食的新鲜感、午餐所需的满足感，以及中央厨房生产和门店单步加热的运营现实，适合作为白领场景下的高质感手持轻午餐。",
+    gammaPrompt:
+      "请制作一份 5 页中文提案。第 1 页：项目标题“下一季轻食新品提案”。第 2 页：客户 Brief 与核心限制。第 3 页：市场与风味信号。第 4 页：主推方案“柠香香草鸡肉佛卡夏”。第 5 页：中央厨房生产与门店执行优势。"
+  },
+  imagePrompts: [
+    "一款高质感柠香鸡肉佛卡夏轻食，摆放在咖啡店桌面旁边配冷萃咖啡，自然日光，真实食品摄影，16:9",
+    "近景展示复热后的佛卡夏剖面，鸡肉、奶酪抹酱和风干番茄层次清晰，精致咖啡馆风格，4:3"
+  ]
+};
+
+export function getMockData(locale: DemoLocale): BriefToPitchOutput {
+  return locale === "cn" ? CN_MOCK_DATA : STARBUCKS_MOCK_DATA;
+}

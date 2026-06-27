@@ -1,0 +1,171 @@
+import type { BriefToPitchCopy } from "./types";
+
+export const cnCopy: BriefToPitchCopy = {
+  locale: "cn",
+  routes: {
+    en: "/rnd-ai-hub-en",
+    cn: "/rnd-ai-hub-cn",
+  },
+  nav: {
+    brand: "Fresh Food Copilot",
+    productLabel: "Brief-to-Pitch",
+    requestDemo: "预约演示",
+    languageToggleLabel: "语言切换",
+    cn: "CN",
+    en: "EN",
+  },
+  hero: {
+    badge: "Fresh Food Brief-to-Pitch Copilot",
+    heading: "把客户新品 Brief 变成",
+    headingAccent: "可提案",
+    headingSuffix: "的研发方案",
+    subheading:
+      "从客户需求解读、市场与风味洞察，到研发方向、食谱概念和 Gamma 提案内容，帮助食品团队更快完成新品提案准备。",
+    primaryCta: "试用 Demo",
+    secondaryCta: "查看示例提案流程",
+    tagsLabel: "核心特点",
+    tags: ["国际化视角", "具体可执行", "兼顾运营现实"],
+    previewTitle: "Brief-to-Pitch 工作流",
+    previewSubtitle: "更快、更具体、更可落地",
+    previewReady: "已就绪",
+    previewIntro:
+      "欢迎使用 Fresh Food Copilot。粘贴客户 Brief，即可生成研发方向和 Gamma 提案内容。",
+    previewSampleBrief:
+      "一家连锁咖啡品牌计划推出下一季轻食菜单，希望新品适合年轻白领的午餐和下午茶场景……",
+    previewDirectionLabel: "方向 1：",
+    previewDirectionName: "柠香香草鸡肉佛卡夏",
+    previewWhyItFitsLabel: "适配原因：",
+    previewWhyItFitsText: "适合搭配冷萃和冰茶，既有高级感，也能满足门店单步加热出品。",
+    previewButtons: ["连锁咖啡轻食 Brief", "中国午餐场景"],
+  },
+  input: {
+    heading: "粘贴客户 Brief",
+    intro: "先粘贴客户菜单需求、会议纪要或季节性新品主题。",
+    privacyNotice:
+      "隐私提示：这是公开 Demo，请不要粘贴客户机密 Brief 或敏感商业信息。",
+    placeholder:
+      "例如：一家连锁咖啡品牌计划推出下一季轻食菜单，希望新品适合年轻白领的午餐和下午茶场景……",
+    sampleLabel: "试试示例：",
+    generateCta: "生成方案",
+    samples: [
+      {
+        label: "连锁咖啡轻食 Brief",
+        text: "一家连锁咖啡品牌计划推出下一季轻食菜单，希望新品适合年轻白领的午餐和下午茶场景。产品需要有新鲜感、轻负担、适合中央厨房生产，并且门店只具备简单加热条件。",
+        context: {
+          customerType: "连锁咖啡品牌",
+          region: "中国",
+          productCategory: "轻食 / 午餐 / 下午茶",
+          constraints: "中央厨房生产，门店仅简单加热，无复杂组装",
+          targetPriceTier: "中高端大众价位",
+          positioning: "轻负担、新鲜感、白领友好",
+        },
+      },
+      {
+        label: "国际餐饮客户（即将上线）",
+        text: "",
+        context: {},
+        disabled: true,
+      },
+    ],
+  },
+  processing: {
+    heading: "正在处理 Brief...",
+    intro:
+      "这一步通常需要 20–40 秒。系统会同步构建提案包、检查运营适配度，并确保内容适合直接进入提案讨论。",
+    steps: [
+      "读取客户 Brief",
+      "诊断限制条件与渠道适配",
+      "构建提案方案包...",
+      "检查运营适配与提案完成度...",
+      "整理研发方向、食谱概念与提案内容",
+    ],
+    finalMessage:
+      "正在做最后校验，确保这份方案更像一套可提案、可运营、可继续研发推进的输出，而不是泛泛创意。",
+    errorPrefix: "生成失败：",
+    fallbackCta: "改用中文示例方案",
+  },
+  output: {
+    heading: "提案方案包",
+    startOver: "重新开始",
+    disclaimerLabel: "提示：",
+    disclaimerText:
+      "以下内容为 AI 生成的概念方向，用于提案和研发讨论。最终配方、宣称、成本和量产可行性仍需由厨师、研发、法规和运营团队验证。",
+    sections: {
+      interpretation: "Brief 解读",
+      targetAudience: "目标人群",
+      emotionalKeywords: "情绪关键词",
+      constraints: "核心限制",
+      hiddenRequirements: "隐含要求",
+      marketSignals: "市场与风味信号",
+      trendSignals: "趋势信号",
+      cuisineInspiration: "风味灵感",
+      operationalStrategy: "运营策略",
+      playbook: "适配 playbook",
+      keyConstraints: "关键限制",
+      conceptStrategy: "方案策略",
+      allowedFormats: "建议形式",
+      riskyFormats: "高风险形式",
+      rejectedIdeas: "已排除思路",
+      directions: "研发方向",
+      recipes: "食谱概念",
+      pitchPackage: "Gamma 提案内容",
+      imagePrompts: "图片生成提示词",
+    },
+    direction: {
+      risk: "风险",
+      confidence: "信心度",
+      mostImportantConstraintResponse: "最关键的限制应对",
+      shelfLifeStrategy: "货架期策略",
+      whyItIsNotGeneric: "为什么不泛化",
+      flavor: "风味",
+      feasibility: "量产可行性",
+      storeExecution: "门店执行",
+      heatingHolding: "加热 / 保温",
+      packaging: "包装考虑",
+      customerFit: "客户适配",
+      unresolvedRisks: "待解决风险",
+    },
+    recipe: {
+      ingredients: "主要原料",
+      chefNotes: "Chef 备注",
+      manufacturingNotes: "生产说明",
+      makeAheadPrefix: "可提前制作",
+      moistureControlPrefix: "控水策略",
+      textureProtectionPrefix: "口感保护",
+      service: "出品方式",
+      shelfLifeAssumption: "货架期假设",
+      constraintChecklist: "限制条件检查表",
+      validationPlan: "验证计划",
+      chefValidationPrefix: "厨师验证",
+      opsValidationPrefix: "运营验证",
+      sensoryValidationPrefix: "感官验证",
+      regulatoryValidationPrefix: "法规 / 宣称验证",
+    },
+    pitch: {
+      copyGammaPrompt: "复制 Gamma 提示词",
+      copySuccessAlert: "已复制到剪贴板！",
+    },
+    leadCapture: {
+      heading: "想把这份方案分享出去？",
+      description:
+        "可以把完整方案包发送到邮箱，或联系我们了解如何为你的研发团队搭建定制化工作流。",
+      sendToEmail: "发送到我的邮箱",
+      requestEnterpriseDemo: "预约企业演示",
+    },
+  },
+  modal: {
+    emailTitle: "导出这份提案",
+    demoTitle: "预约企业演示",
+    emailDescription:
+      "填写邮箱后，我们会把完整提案包发送给你，包括全部食谱概念与 Gamma 提示词。",
+    demoDescription:
+      "填写邮箱后，我们会联系你，演示这套 Copilot 如何结合你的研发团队与工厂限制进行定制。",
+    emailPlaceholder: "work@email.com",
+    submit: "提交",
+    successTitle: "已收到请求",
+    successDescription: "稍后请留意邮箱。",
+  },
+  errors: {
+    genericGenerationFailed: "出现了未预期的问题。",
+  },
+};

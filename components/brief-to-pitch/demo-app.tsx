@@ -1,12 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { DemoHero } from "./demo-hero";
+import React, { useEffect, useState } from "react";
+import { getMockData } from "./mock-data";
 import { BriefInputPanel } from "./brief-input-panel";
-import { ProcessingTimeline } from "./processing-timeline";
-import { OutputPanels } from "./output-panels";
+import { DemoHero } from "./demo-hero";
 import { LeadCaptureModal } from "./lead-capture-modal";
+import { OutputPanels } from "./output-panels";
+import { ProcessingTimeline } from "./processing-timeline";
 import type { BriefToPitchOutput } from "./types";
+import { LanguageToggle } from "./language-toggle";
+import {
+  getBriefToPitchCopy,
+  type DemoLocale,
+} from "@/lib/brief-to-pitch/copy";
 
 type AppState = "input" | "processing" | "output";
 type DemoContext = unknown;
@@ -33,20 +39,23 @@ function restorePersistedDemoState(
   if (parsed.generatedData) setters.setGeneratedData(parsed.generatedData);
 }
 
-export function BriefToPitchDemoApp() {
+export function BriefToPitchDemoApp({ locale }: { locale: DemoLocale }) {
+  const copy = getBriefToPitchCopy(locale);
+  const fallbackData = getMockData(locale);
+  const storageKey = `freshFoodDemoState:${locale}`;
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [appState, setAppState] = useState<AppState>("input");
   const [briefText, setBriefText] = useState("");
   const [contextFields, setContextFields] = useState<DemoContext | null>(null);
   const [generatedData, setGeneratedData] = useState<BriefToPitchOutput | null>(null);
-  
   const [leadCaptureIntent, setLeadCaptureIntent] = useState<"email" | "demo" | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  // Load state from sessionStorage on mount
   useEffect(() => {
     let frameId = 0;
     try {
-      const savedState = sessionStorage.getItem("freshFoodDemoState");
+      const savedState = sessionStorage.getItem(storageKey);
       if (savedState) {
         const parsed = JSON.parse(savedState) as PersistedDemoState;
         restorePersistedDemoState(parsed, {
@@ -67,21 +76,18 @@ export function BriefToPitchDemoApp() {
     return () => {
       window.cancelAnimationFrame(frameId);
     };
-  }, []);
+  }, [storageKey]);
 
-  // Save state to sessionStorage when it changes
   useEffect(() => {
     if (!isLoaded) return;
     const stateObj = {
       appState,
       briefText,
       contextFields,
-      generatedData
+      generatedData,
     };
-    sessionStorage.setItem("freshFoodDemoState", JSON.stringify(stateObj));
-  }, [appState, briefText, contextFields, generatedData, isLoaded]);
-
-  const [apiError, setApiError] = useState<string | null>(null);
+    sessionStorage.setItem(storageKey, JSON.stringify(stateObj));
+  }, [appState, briefText, contextFields, generatedData, isLoaded, storageKey]);
 
   const handleGenerate = async (brief: string, context: DemoContext) => {
     setBriefText(brief);
@@ -93,12 +99,12 @@ export function BriefToPitchDemoApp() {
       const res = await fetch("/api/demo/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ brief, context }),
+        body: JSON.stringify({ brief, context, locale }),
       });
 
       if (!res.ok) {
         const errorData = (await res.json()) as { error?: string };
-        throw new Error(errorData.error || "Generation failed.");
+        throw new Error(errorData.error || copy.errors.genericGenerationFailed);
       }
 
       const data = (await res.json()) as BriefToPitchOutput;
@@ -106,13 +112,15 @@ export function BriefToPitchDemoApp() {
       setAppState("output");
     } catch (err: unknown) {
       console.error(err);
-      setApiError(err instanceof Error ? err.message : "An unexpected error occurred.");
+      setApiError(
+        err instanceof Error ? err.message : copy.errors.genericGenerationFailed
+      );
     }
   };
 
   const handleFallbackToMock = () => {
     setApiError(null);
-    setGeneratedData(null); // Passing null to OutputPanels triggers mock data fallback
+    setGeneratedData(null);
     setAppState("output");
   };
 
@@ -123,71 +131,80 @@ export function BriefToPitchDemoApp() {
     setGeneratedData(null);
     setApiError(null);
     setLeadCaptureIntent(null);
-    sessionStorage.removeItem("freshFoodDemoState");
+    sessionStorage.removeItem(storageKey);
   };
 
-  if (!isLoaded) return null; // Avoid hydration mismatch
+  if (!isLoaded) return null;
 
   return (
     <div className="min-h-screen bg-[#f7fbf8] font-sans text-[#173a42]">
-      {/* Navigation Bar Mock */}
       <nav className="sticky top-0 z-20 backdrop-blur-xl bg-[rgba(247,251,248,0.76)] border-b border-[rgba(23,58,66,0.08)]">
-        <div className="w-full max-w-[1180px] mx-auto h-[74px] flex items-center justify-between px-[20px]">
+        <div className="w-full max-w-[1180px] mx-auto h-[74px] flex items-center justify-between px-[20px] gap-[16px]">
           <div className="flex items-center gap-[12px] font-[760] tracking-[-0.03em]">
-            <div className="w-[40px] h-[40px] rounded-[15px] bg-[radial-gradient(circle_at_62%_22%,#ffffff_0_13%,transparent_14%),linear-gradient(135deg,#1fc7b1,#9bded8)] grid place-items-center shadow-[0_14px_26px_rgba(34,184,165,0.22)]">
-            </div>
+            <div className="w-[40px] h-[40px] rounded-[15px] bg-[radial-gradient(circle_at_62%_22%,#ffffff_0_13%,transparent_14%),linear-gradient(135deg,#1fc7b1,#9bded8)] grid place-items-center shadow-[0_14px_26px_rgba(34,184,165,0.22)]" />
             <div className="flex flex-col leading-[1.05]">
-              <span className="text-[17px]">Fresh Food Copilot</span>
-              <span className="text-[11px] text-[#6f8183] font-[650] tracking-[0.12em] uppercase mt-[4px]">Brief-to-Pitch</span>
+              <span className="text-[17px]">{copy.nav.brand}</span>
+              <span className="text-[11px] text-[#6f8183] font-[650] tracking-[0.12em] uppercase mt-[4px]">
+                {copy.nav.productLabel}
+              </span>
             </div>
           </div>
-          
-          <button 
-            onClick={() => setLeadCaptureIntent("demo")}
-            className="border border-[rgba(8,127,116,0.2)] bg-[rgba(255,255,255,0.72)] text-[#087f74] px-[16px] py-[10px] rounded-full font-bold shadow-[0_10px_30px_rgba(17,67,74,0.06)] hover:bg-white hover:-translate-y-[2px] transition-all"
-          >
-            Request Demo
-          </button>
+
+          <div className="flex items-center gap-[10px]">
+            <LanguageToggle locale={locale} />
+            <button
+              onClick={() => setLeadCaptureIntent("demo")}
+              className="border border-[rgba(8,127,116,0.2)] bg-[rgba(255,255,255,0.72)] text-[#087f74] px-[16px] py-[10px] rounded-full font-bold shadow-[0_10px_30px_rgba(17,67,74,0.06)] hover:bg-white hover:-translate-y-[2px] transition-all"
+            >
+              {copy.nav.requestDemo}
+            </button>
+          </div>
         </div>
       </nav>
 
       <main>
         {appState === "input" && (
           <>
-            <DemoHero />
-            <BriefInputPanel 
-              brief={briefText} 
+            <DemoHero copy={copy} />
+            <BriefInputPanel
+              locale={locale}
+              copy={copy}
+              brief={briefText}
               onBriefChange={setBriefText}
-              onGenerate={handleGenerate} 
+              onGenerate={handleGenerate}
             />
           </>
         )}
 
         {appState === "processing" && (
-          <ProcessingTimeline error={apiError} onFallback={handleFallbackToMock} />
+          <ProcessingTimeline copy={copy} error={apiError} onFallback={handleFallbackToMock} />
         )}
 
         {appState === "output" && (
           <div className="animate-in fade-in duration-500 pb-[100px]">
-            <div className="w-full max-w-[1180px] mx-auto px-[20px] pt-[40px] flex justify-between items-end">
-              <h2 className="text-[32px] font-bold tracking-[-0.04em] text-[#173a42]">Proposal Package</h2>
-              <button 
-                onClick={handleStartOver}
-                className="text-[#087f74] font-bold hover:underline"
-              >
-                Start Over
+            <div className="w-full max-w-[1180px] mx-auto px-[20px] pt-[40px] flex justify-between items-end gap-[16px]">
+              <h2 className="text-[32px] font-bold tracking-[-0.04em] text-[#173a42]">
+                {copy.output.heading}
+              </h2>
+              <button onClick={handleStartOver} className="text-[#087f74] font-bold hover:underline">
+                {copy.output.startOver}
               </button>
             </div>
-            <OutputPanels 
-              data={generatedData ?? undefined} 
-              onOpenLeadCapture={(intent) => setLeadCaptureIntent(intent)} 
+            <OutputPanels
+              copy={copy}
+              data={generatedData ?? fallbackData}
+              onOpenLeadCapture={(intent) => setLeadCaptureIntent(intent)}
             />
           </div>
         )}
       </main>
 
       {leadCaptureIntent && (
-        <LeadCaptureModal intent={leadCaptureIntent} onClose={() => setLeadCaptureIntent(null)} />
+        <LeadCaptureModal
+          copy={copy}
+          intent={leadCaptureIntent}
+          onClose={() => setLeadCaptureIntent(null)}
+        />
       )}
     </div>
   );

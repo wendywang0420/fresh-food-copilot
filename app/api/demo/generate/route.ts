@@ -5,29 +5,44 @@ import { selectChannelPlaybook } from "@/lib/brief-to-pitch/channel-playbooks";
 
 export const maxDuration = 45; // Vercel setting (ignored on Cloudflare, but good practice)
 
+const isLocale = (value: unknown): value is "en" | "cn" =>
+  value === "en" || value === "cn";
+
+const getErrorCopy = (locale: "en" | "cn") => ({
+  tooManyRequests: locale === "cn" ? "请求过于频繁，请稍后再试。" : "Too many requests. Please wait.",
+  requestTooLarge: locale === "cn" ? "请求内容过大。" : "Request too large.",
+  briefRequired: locale === "cn" ? "必须填写 Brief。" : "Brief is required.",
+  briefTooLong: locale === "cn" ? "Brief 内容过长。" : "Brief is too long.",
+  emptyResponse: locale === "cn" ? "AI 返回内容为空。" : "Empty response from AI.",
+  timedOut: locale === "cn" ? "生成超时，请尝试更简洁的 Brief。" : "Generation timed out. Please try a simpler brief.",
+  failed: locale === "cn" ? "生成失败。" : "Generation failed.",
+});
+
 export async function POST(req: Request) {
+  let locale: "en" | "cn" = "en";
   try {
     // Basic IP/Session Rate Limiting
     const ip = req.headers.get("x-forwarded-for") || "unknown";
     const rl = checkRateLimit(`demo-generate-${ip}`);
-    if (!rl.allowed) {
-      return NextResponse.json({ error: "Too many requests. Please wait." }, { status: 429 });
-    }
-
-    // Request size limiting
-    const contentLength = req.headers.get("content-length");
-    if (contentLength && parseInt(contentLength, 10) > 1024 * 10) { // 10KB limit
-      return NextResponse.json({ error: "Request too large." }, { status: 413 });
-    }
-
     const body = await req.json();
+    locale = isLocale(body.locale) ? body.locale : "en";
+    const errorCopy = getErrorCopy(locale);
     const { brief, context } = body;
 
+    if (!rl.allowed) {
+      return NextResponse.json({ error: errorCopy.tooManyRequests }, { status: 429 });
+    }
+
+    const contentLength = req.headers.get("content-length");
+    if (contentLength && parseInt(contentLength, 10) > 1024 * 10) {
+      return NextResponse.json({ error: errorCopy.requestTooLarge }, { status: 413 });
+    }
+
     if (!brief || typeof brief !== "string" || brief.trim().length === 0) {
-      return NextResponse.json({ error: "Brief is required." }, { status: 400 });
+      return NextResponse.json({ error: errorCopy.briefRequired }, { status: 400 });
     }
     if (brief.length > 3000) {
-      return NextResponse.json({ error: "Brief is too long." }, { status: 400 });
+      return NextResponse.json({ error: errorCopy.briefTooLong }, { status: 400 });
     }
 
     const openai = getOpenAIClient();
@@ -81,6 +96,9 @@ Follow these rules strictly:
 32. For airline catering, every concept must include tray architecture, galley reheating method or cold-service method, low-aroma strategy, altitude taste adjustment, moisture retention mechanism, low-mess eating logic, and allergen or dietary clarity.
 33. For airline catering, prefer airline-specific formats such as sealed tray bakes, compact rice timbales, soft savory cakes with sauce wells, compartmentalized cold bentos, sauced protein and starch trays, low-aroma vegetable ragouts, and reheatable grain or starch bakes.
 34. For airline catering, reject at least 2 generic catering ideas before finalizing, and product names should sound like airline tray concepts rather than restaurant plates.
+35. The response language depends on locale. If locale is "en", write all human-facing content in English. If locale is "cn", write all human-facing content in Simplified Chinese.
+36. Keep the JSON schema keys exactly as provided in English.
+37. Keep all enum tokens required by the schema exactly as specified in English, including riskRating, confidence, and constraintChecklist.status values.
 
 Format the output strictly according to the requested JSON schema. Generate exactly 3 R&D directions and 1 detailed recipe concept for the strongest direction.
 Do not output chain-of-thought. Output only the structured result.`;
@@ -95,6 +113,9 @@ ${context ? JSON.stringify(context, null, 2) : "None provided."}
 
 Selected Channel Playbook:
 ${JSON.stringify(playbook, null, 2)}
+
+Requested locale:
+${locale}
 
 Instructions for this brief:
 - Diagnose the hardest operational constraint before ideating.
@@ -111,6 +132,8 @@ Instructions for this brief:
   - Product names should read like airline tray concepts.
   - Explain the tray architecture and reheating or cold-service logic clearly.
   - Do not fall back to quinoa cakes or generic healthy bakes with vague service logic.
+- If locale is "cn", all titles, summaries, bullets, and prompts should read naturally in Simplified Chinese for Chinese food R&D and supplier teams.
+- If locale is "en", keep the output in clear proposal-ready English.
 
 Please generate the structured R&D proposal package now.`;
 
@@ -344,7 +367,7 @@ Please generate the structured R&D proposal package now.`;
 
     const resultText = response.choices[0]?.message?.content;
     if (!resultText) {
-      throw new Error("Empty response from AI.");
+      throw new Error(errorCopy.emptyResponse);
     }
 
     const data = JSON.parse(resultText);
@@ -352,10 +375,11 @@ Please generate the structured R&D proposal package now.`;
 
   } catch (error: unknown) {
     console.error("Generate error:", error);
+    const errorCopy = getErrorCopy(locale);
     if (error instanceof Error && error.name === "AbortError") {
-      return NextResponse.json({ error: "Generation timed out. Please try a simpler brief." }, { status: 504 });
+      return NextResponse.json({ error: errorCopy.timedOut }, { status: 504 });
     }
     const details = error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json({ error: "Generation failed.", details }, { status: 500 });
+    return NextResponse.json({ error: errorCopy.failed, details }, { status: 500 });
   }
 }
