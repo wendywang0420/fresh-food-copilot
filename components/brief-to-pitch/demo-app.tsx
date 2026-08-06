@@ -24,6 +24,11 @@ interface PersistedDemoState {
   generatedData?: BriefToPitchOutput | null;
 }
 
+const SIMULATED_PROCESSING_MS = 8200;
+
+const wait = (durationMs: number) =>
+  new Promise((resolve) => window.setTimeout(resolve, durationMs));
+
 function restorePersistedDemoState(
   parsed: PersistedDemoState,
   setters: {
@@ -96,6 +101,7 @@ export function BriefToPitchDemoApp({ locale }: { locale: DemoLocale }) {
     setApiError(null);
 
     try {
+      const simulatedProcessing = wait(SIMULATED_PROCESSING_MS);
       const res = await fetch("/api/demo/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,6 +114,7 @@ export function BriefToPitchDemoApp({ locale }: { locale: DemoLocale }) {
       }
 
       const data = (await res.json()) as BriefToPitchOutput;
+      await simulatedProcessing;
       setGeneratedData(data);
       setAppState("output");
     } catch (err: unknown) {
