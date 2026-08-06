@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const body = (await req.json()) as Record<string, unknown>;
     locale = isLocale(body.locale) ? body.locale : "en";
     const errorCopy = getErrorCopy(locale);
-    const { brief, context } = body;
+    const { brief } = body;
 
     const ip = req.headers.get("x-forwarded-for") || "unknown";
     const rl = checkRateLimit(`demo-generate-${ip}`);
@@ -44,14 +44,7 @@ export async function POST(req: Request) {
     }
 
     const demoData = getMockData(locale);
-
-    return NextResponse.json({
-      ...demoData,
-      brief: {
-        text: brief.trim(),
-        context,
-      },
-    });
+    return NextResponse.json(demoData);
   } catch (error: unknown) {
     console.error("Demo generate error:", error);
     const errorCopy = getErrorCopy(locale);
