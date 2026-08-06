@@ -4,17 +4,17 @@ import type { BriefToPitchCopy, DemoLocale } from "@/lib/brief-to-pitch/copy";
 export function BriefInputPanel({ 
   locale,
   copy,
-  brief,
   onBriefChange,
   onGenerate 
 }: { 
   locale: DemoLocale;
   copy: BriefToPitchCopy;
-  brief: string;
   onBriefChange: (val: string) => void;
   onGenerate: (brief: string, context: unknown) => void;
 }) {
   const activeSample = copy.input.samples.find((sample) => !sample.disabled) ?? copy.input.samples[0];
+  const lockedBrief = activeSample.text;
+  const keepLockedBrief = () => onBriefChange(lockedBrief);
 
   return (
     <section id="demo-app" className="w-full max-w-[1180px] mx-auto px-[20px] py-[40px]">
@@ -28,8 +28,12 @@ export function BriefInputPanel({
         <textarea
           className="w-full min-h-[160px] p-[16px] border border-[rgba(23,58,66,0.14)] rounded-[16px] bg-[#fbfdf9] text-[#173a42] placeholder:text-[#6f8183] focus:outline-none focus:border-[#22b8a5] focus:ring-4 focus:ring-[rgba(34,184,165,0.1)] resize-y mb-[24px]"
           placeholder={copy.input.placeholder}
-          value={brief}
-          onChange={(e) => onBriefChange(e.target.value)}
+          value={lockedBrief}
+          onBeforeInput={(event) => event.preventDefault()}
+          onPaste={(event) => event.preventDefault()}
+          onDrop={(event) => event.preventDefault()}
+          onChange={keepLockedBrief}
+          onFocus={keepLockedBrief}
         />
 
         <div className="flex flex-wrap items-center justify-between gap-[16px]">
@@ -56,8 +60,8 @@ export function BriefInputPanel({
           </div>
 
           <button
-            onClick={() => onGenerate(brief, activeSample.context)}
-            disabled={!brief.trim()}
+            onClick={() => onGenerate(lockedBrief, activeSample.context)}
+            disabled={!lockedBrief.trim()}
             className="border-0 rounded-full py-[12px] px-[24px] cursor-pointer font-[800] bg-gradient-to-br from-[#087f74] to-[#22b8a5] text-white shadow-[0_12px_24px_rgba(34,184,165,0.22)] transition-all hover:-translate-y-[2px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {copy.input.generateCta}

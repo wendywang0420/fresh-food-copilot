@@ -176,7 +176,6 @@ export function BriefToPitchDemoApp({ locale }: { locale: DemoLocale }) {
             <BriefInputPanel
               locale={locale}
               copy={copy}
-              brief={briefText}
               onBriefChange={setBriefText}
               onGenerate={handleGenerate}
             />
